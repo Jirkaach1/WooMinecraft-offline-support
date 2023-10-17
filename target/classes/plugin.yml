@@ -1,10 +1,11 @@
 name: WooMinecraft
 main: com.plugish.woominecraft.WooMinecraft
-version: 1.4.5-1.18
-authors: [JerryWood, TekkitCommando, Phillmac, Jerzean]
+version: 1.4.6-1.12.2-1.20.2
+authors: [Jirkaach]
 description: A WooCommerce Minecraft Bridge
 website:  http://woominecraft.com
 api-version: 1.13
+
 
 commands:
   woo:

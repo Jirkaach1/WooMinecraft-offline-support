@@ -1,12 +1,4 @@
-/*
- * Woo Minecraft Donation plugin
- * Author:	   Jerry Wood
- * Author URI: http://plugish.com
- * License:	   GPLv2
- *
- * Copyright 2014 All rights Reserved
- *
- */
+
 package com.plugish.woominecraft;
 
 import com.google.gson.Gson;
@@ -28,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.ChatColor;
 import java.util.Scanner;
 
 public final class WooMinecraft extends JavaPlugin {
@@ -36,14 +29,14 @@ public final class WooMinecraft extends JavaPlugin {
 
     private YamlConfiguration l10n;
 
-    private YamlConfiguration logConfig;
+    public YamlConfiguration logConfig;
     private File logFile;
 
     public static final String NL = System.getProperty("line.separator");
 
     /**
      * Stores the player data to prevent double checks.
-     *
+     * <p>
      * i.e. name:true|false
      */
     private List<String> PlayersMap = new ArrayList<>();
@@ -53,7 +46,14 @@ public final class WooMinecraft extends JavaPlugin {
         instance = this;
         this.logFile = new File(this.getDataFolder(), "log.yml");
         this.logConfig = YamlConfiguration.loadConfiguration(logFile);
-
+        if (this.logConfig != null) {
+            this.logConfig.set("loggingEnabled", true);
+            try {
+                this.logConfig.save(this.logFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         YamlConfiguration config = (YamlConfiguration) getConfig();
 
         try {
@@ -73,7 +73,6 @@ public final class WooMinecraft extends JavaPlugin {
         // Log when the plugin is initialized.
         getLogger().info(this.getLang("log.com_init"));
 
-        // Setup the scheduler
         BukkitRunner scheduler = new BukkitRunner(instance);
         scheduler.runTaskTimerAsynchronously(instance, config.getInt("update_interval") * 20, config.getInt("update_interval") * 20);
 
@@ -167,6 +166,7 @@ public final class WooMinecraft extends JavaPlugin {
                 debug_log("Player was null for an order", 2);
                 continue;
             }
+
             // World whitelisting.
             if (getConfig().isSet("whitelist-worlds")) {
                 List<String> whitelistWorlds = getConfig().getStringList("whitelist-worlds");
@@ -177,6 +177,7 @@ public final class WooMinecraft extends JavaPlugin {
                     continue;
                 }
             }
+
             // Walk over all commands and run them at the next available tick.
             for (String command : order.getCommands()) {
                 BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
@@ -186,8 +187,20 @@ public final class WooMinecraft extends JavaPlugin {
             debug_log("Adding item to list - " + order.getOrderId());
             processedOrders.add(order.getOrderId());
             debug_log("Processed length is " + processedOrders.size());
+
             // Log the order
             logOrder(order, player.getName());
+
+            // Notify OP players
+            for (Player op : Bukkit.getServer().getOnlinePlayers()) {
+                if (op.isOp()) {
+                    op.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5[WooMinecraft] &fOrder Fulfilled - Player: &6" + player.getName() + "&f, OrderID: &e" + order.getOrderId()));
+                }
+            }
+
+            // Print to server console
+            Bukkit.getServer().getConsoleSender().sendMessage("Order Fulfilled - Player: " + player.getName() + ", OrderID: " + order.getOrderId());
+
         }
         // If it's empty, we skip it.
         if (processedOrders.isEmpty()) {
@@ -204,7 +217,7 @@ public final class WooMinecraft extends JavaPlugin {
         WMCProcessedOrders wmcProcessedOrders = new WMCProcessedOrders();
         wmcProcessedOrders.setProcessedOrders(processedOrders);
         String orders = gson.toJson(wmcProcessedOrders);
-        // Setup the client.
+
         OkHttpClient client = new OkHttpClient();
         // Process stuff now.
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), orders);
@@ -353,9 +366,21 @@ public final class WooMinecraft extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
+
     public File getLogFile() {
         return logFile;
+    }
+    public void clearLogEntries() {
+        if (this.logConfig != null) {
+            this.logConfig.set("logEntries", new ArrayList<>());
+            try {
+                this.logConfig.save(this.logFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

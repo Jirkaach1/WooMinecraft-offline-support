@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.io.IOException;
@@ -16,8 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.File;
+import java.io.FileWriter;
 
 public class WooCommand implements TabExecutor {
+
 
     public WooMinecraft plugin = WooMinecraft.instance;
     private final String chatPrefix = ChatColor.translateAlternateColorCodes('&', "&5[&fWooMinecraft&5] ");
@@ -31,6 +34,7 @@ public class WooCommand implements TabExecutor {
         subCommands.put("check", "woo.admin");
         subCommands.put("ping", "woo.admin");
         subCommands.put("debug", "woo.admin");
+        subCommands.put("clearlog", "woo.admin");
 
     }
 
@@ -90,15 +94,17 @@ public class WooCommand implements TabExecutor {
             sender.sendMessage(msg);
             return;
         }
-
         try {
             File logFile = plugin.getLogFile();
             if (logFile.exists()) {
-                if (logFile.delete()) {
-                    sender.sendMessage(chatPrefix + ChatColor.GREEN + "Log file cleared successfully.");
-                } else {
-                    sender.sendMessage(chatPrefix + ChatColor.RED + "Failed to clear the log file.");
-                }
+
+                plugin.clearLogEntries();
+                FileWriter writer = new FileWriter(logFile);
+                writer.write("");
+                writer.close();
+
+
+                sender.sendMessage(chatPrefix + ChatColor.GREEN + "Log file cleared successfully.");
             } else {
                 sender.sendMessage(chatPrefix + ChatColor.YELLOW + "Log file does not exist.");
             }
@@ -107,6 +113,8 @@ public class WooCommand implements TabExecutor {
             e.printStackTrace();
         }
     }
+
+
 
     private void checkSubcommand(CommandSender sender) {
         if (!sender.hasPermission("woo.admin")) {
@@ -270,5 +278,6 @@ public class WooCommand implements TabExecutor {
         sender.sendMessage(ChatColor.DARK_PURPLE + "/woo check" +ChatColor.WHITE+ " Check for donations/orders");
         sender.sendMessage(ChatColor.DARK_PURPLE + "/woo ping" +ChatColor.WHITE+ " Test server connection");
         sender.sendMessage(ChatColor.DARK_PURPLE + "/woo debug" +ChatColor.WHITE+ " Enable/disable debugging");
+        sender.sendMessage(ChatColor.DARK_PURPLE + "/woo clearlog" +ChatColor.WHITE+ " Clears the logfile");
     }
 }
