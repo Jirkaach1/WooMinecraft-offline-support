@@ -1,0 +1,17 @@
+name: WooMinecraft
+main: com.plugish.woominecraft.WooMinecraft
+version: 1.4.5-1.18
+authors: [JerryWood, TekkitCommando, Phillmac, Jerzean]
+description: A WooCommerce Minecraft Bridge
+website:  http://woominecraft.com
+api-version: 1.13
+
+commands:
+  woo:
+    description: Check
+    usage: |
+        /<command> check - check for donations.
+permissions:
+  woo.admin:
+    default: op
+    description: Allows the player (or console) to use the woo commands.
