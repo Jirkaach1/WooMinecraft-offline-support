@@ -61,7 +61,7 @@ You'll need the WordPress plugin for this MC Plugin to work - you can [get it he
 
 ## Changelog
 
-## 1.4.5
+## 1.4.6
 * Added support for offline minecraft servers
 * Added logging of order commands being used ingame saved in log.yml with player name and order id inside the WooMinecraft folder
 * Added command /woo clearlog which clears the logfile saved in the WooMinecraft folder
