@@ -3,7 +3,7 @@ Original source :
 https://github.com/WooMinecraft/woominecraft-wp
 https://github.com/WooMinecraft/WooMinecraft
 
-# This is an edited version of the original plugin which adds support to offline minecraft servers with additional qualitify of life features.
+# This is an edited version of the original plugin which adds support to offline minecraft servers with additional quality of life features.
 
 # WooMinecraft - Self-hosted Minecraft Donations
 
