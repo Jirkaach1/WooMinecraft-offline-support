@@ -59,3 +59,4 @@ You'll need the WordPress plugin for this MC Plugin to work - you can [get it he
 * Added support for offline minecraft servers
 * Added logging of order commands being used ingame saved in log.yml with player name and order id inside the WooMinecraft folder
 * Added command /woo clearlog which clears the logfile saved in the WooMinecraft folder
+* Every time automatic woo check is ran, it will message players with OP and console with orders that were completed in that check
