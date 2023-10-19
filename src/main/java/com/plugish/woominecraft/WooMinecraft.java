@@ -1,6 +1,5 @@
 
 package com.plugish.woominecraft;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.plugish.woominecraft.pojo.Order;
@@ -12,16 +11,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
-import java.util.Scanner;
+import org.bukkit.Sound;
 
 public final class WooMinecraft extends JavaPlugin {
 
@@ -44,6 +41,21 @@ public final class WooMinecraft extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        String asciiArt =
+
+                "  \n" +
+                "  \n" +
+                "  \n" +
+                        " _       __                 __ __    ______                    ____     ____    ______\n" +
+                        "  | |     / /  ____   ____   / // /   / ____/  __  __   ____    / __ \\   / __ \\  / ____/\n" +
+                        "  | | /| / /  / __ \\ / __ \\ / // /_  / /_     / / / /  / __ \\  / /_/ /  / /_/ / / / __  \n" +
+                        "  | |/ |/ /  / /_/ // /_/ //__  __/ / __/    / /_/ /  / / / / / _, _/  / ____/ / /_/ /  \n" +
+                        "  |__/|__/   \\____/ \\____/   /_/   /_/       \\__,_/  /_/ /_/ /_/ |_|  /_/      \\____/\n"
+                +   "  \n"
+                        +   "  \n"
+                        +   "  \n";
+        getLogger().info(asciiArt);
+
         this.logFile = new File(this.getDataFolder(), "log.yml");
         this.logConfig = YamlConfiguration.loadConfiguration(logFile);
         if (this.logConfig != null) {
@@ -74,7 +86,7 @@ public final class WooMinecraft extends JavaPlugin {
         getLogger().info(this.getLang("log.com_init"));
 
         BukkitRunner scheduler = new BukkitRunner(instance);
-        scheduler.runTaskTimerAsynchronously(instance, config.getInt("update_interval") * 20, config.getInt("update_interval") * 20);
+        scheduler.runTaskTimerAsynchronously(instance, config.getInt( "update_interval" ) * 20, config.getInt( "update_interval" ) * 20 );
 
         // Log when the plugin is fully enabled (setup complete).
         getLogger().info(this.getLang("log.enabled"));
@@ -194,7 +206,7 @@ public final class WooMinecraft extends JavaPlugin {
             // Notify OP players
             for (Player op : Bukkit.getServer().getOnlinePlayers()) {
                 if (op.isOp()) {
-                    op.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5[WooMinecraft] &fOrder Fulfilled - Player: &6" + player.getName() + "&f, OrderID: &e" + order.getOrderId()));
+                    op.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6[Woo4FunRPG] &fOrder Fulfilled - Player: &6" + player.getName() + "&f, OrderID: &e" + order.getOrderId()));
                 }
             }
 
@@ -218,21 +230,26 @@ public final class WooMinecraft extends JavaPlugin {
         wmcProcessedOrders.setProcessedOrders(processedOrders);
         String orders = gson.toJson(wmcProcessedOrders);
 
+        // Setup the client.
         OkHttpClient client = new OkHttpClient();
+
         // Process stuff now.
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), orders);
         Request request = new Request.Builder().url(getSiteURL()).post(body).build();
         Response response = client.newCall(request).execute();
+
         // If the body is empty, we can do nothing.
         if (null == response.body()) {
             throw new Exception("Received an empty response from your server, check connections.");
         }
+
         // Get the JSON reply from the endpoint.
         WMCPojo wmcPojo = gson.fromJson(response.body().string(), WMCPojo.class);
         if (null != wmcPojo.getCode()) {
-            wmc_log("Received an error when trying to send post data:" + wmcPojo.getCode(), 3);
+            wmc_log("Received an error when trying to send post data: " + wmcPojo.getCode(), 3);
             throw new Exception(wmcPojo.getMessage());
         }
+
         return true;
     }
 
@@ -310,11 +327,10 @@ public final class WooMinecraft extends JavaPlugin {
         String validPlayerKey = playerKeyBase + true;
         // Check if the server is in online mode.
         if (Bukkit.getServer().getOnlineMode()) {
-            wmc_log("Server is in online mode.", 3);
             return true;
         }
         if (!Bukkit.spigot().getConfig().getBoolean("settings.bungeecord")) {
-            wmc_log("Server is in online mode.", 3);
+
             return true;
         }
         // Check the base pattern, if it exists, return if the player is valid or not.
@@ -366,7 +382,16 @@ public final class WooMinecraft extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Player player = Bukkit.getPlayerExact(playerName);
+        if (player != null) {
+            // Send a colored message to the player
+            String message = ChatColor.translateAlternateColorCodes('&', "&l&e[Woo4FunRPG]&r Your order &l&6" + order.getOrderId() + "&r has been fulfilled!");
+            player.sendMessage(message);
 
+
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+
+        }
     }
 
     public File getLogFile() {
@@ -382,5 +407,6 @@ public final class WooMinecraft extends JavaPlugin {
             }
         }
     }
+
 
 }

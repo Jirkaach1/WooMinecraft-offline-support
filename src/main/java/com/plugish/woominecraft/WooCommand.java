@@ -1,29 +1,31 @@
 package com.plugish.woominecraft;
-
+import com.plugish.woominecraft.BukkitRunner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.File;
 import java.io.FileWriter;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Calendar;
 public class WooCommand implements TabExecutor {
 
 
+    private BukkitRunner plugin1;
     public WooMinecraft plugin = WooMinecraft.instance;
-    private final String chatPrefix = ChatColor.translateAlternateColorCodes('&', "&5[&fWooMinecraft&5] ");
+    private final String chatPrefix = ChatColor.translateAlternateColorCodes('&', "&l&6[Woo4FunRPG]&r ");
 
     // Hashmap for storing subcommand names and permissions for them
     private final HashMap<String, String> subCommands = new HashMap<>();
@@ -35,6 +37,7 @@ public class WooCommand implements TabExecutor {
         subCommands.put("ping", "woo.admin");
         subCommands.put("debug", "woo.admin");
         subCommands.put("clearlog", "woo.admin");
+        subCommands.put("history", "woo.admin");
 
     }
 
@@ -58,6 +61,7 @@ public class WooCommand implements TabExecutor {
                 clearLogSubcommand(sender);
             }
 
+
             else {
                 sender.sendMessage(chatPrefix + "Usage: /woo help");
             }
@@ -71,8 +75,10 @@ public class WooCommand implements TabExecutor {
                 pingSubcommand(sender, args.length,"");
             }
         }
-        return true;
+
+        return false;
     }
+
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
@@ -269,15 +275,19 @@ public class WooCommand implements TabExecutor {
      * Shows the sender all the available commands.
      * @param sender Who sent the message.
      */
+
+
+
     private void helpSubcommand(CommandSender sender) {
         PluginDescriptionFile descriptionFile = plugin.getDescription();
 
         sender.sendMessage(chatPrefix +" Ver"+ descriptionFile.getVersion());
-        sender.sendMessage(ChatColor.DARK_PURPLE + "By " + String.join( ",", descriptionFile.getAuthors() ) );
-        sender.sendMessage(ChatColor.DARK_PURPLE + "/woo help" +ChatColor.WHITE+ " Shows this Helpsite");
-        sender.sendMessage(ChatColor.DARK_PURPLE + "/woo check" +ChatColor.WHITE+ " Check for donations/orders");
-        sender.sendMessage(ChatColor.DARK_PURPLE + "/woo ping" +ChatColor.WHITE+ " Test server connection");
-        sender.sendMessage(ChatColor.DARK_PURPLE + "/woo debug" +ChatColor.WHITE+ " Enable/disable debugging");
-        sender.sendMessage(ChatColor.DARK_PURPLE + "/woo clearlog" +ChatColor.WHITE+ " Clears the logfile");
+        sender.sendMessage(ChatColor.GREEN + "By " + String.join( ",", descriptionFile.getAuthors() ) );
+        sender.sendMessage(ChatColor.GREEN + "/woo help" +ChatColor.WHITE+ " Shows this Helpsite");
+        sender.sendMessage(ChatColor.GREEN + "/woo check" +ChatColor.WHITE+ " Check for donations/orders");
+        sender.sendMessage(ChatColor.GREEN + "/woo ping" +ChatColor.WHITE+ " Test server connection");
+        sender.sendMessage(ChatColor.GREEN + "/woo debug" +ChatColor.WHITE+ " Enable/disable debugging");
+        sender.sendMessage(ChatColor.GREEN + "/woo clearlog" +ChatColor.WHITE+ " Clears the logfile");
+
     }
 }
