@@ -54,7 +54,10 @@ debug: false
 You'll need the WordPress plugin for this MC Plugin to work - you can [get it here](https://github.com/WooMinecraft/woominecraft-wp).
 
 ## Changelog
-
+## 1.4.7
+* Graphic and visual changes of the plugin features
+* Fixed some minor issues
+* Added new order delivery messages and logging
 ## 1.4.6
 * Added support for offline minecraft servers
 * Added logging of order commands being used ingame saved in log.yml with player name and order id inside the WooMinecraft folder
